@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Image Processing</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <h2>Image Processing with opencv.js</h2>
+  <h3 id='status'>Loading...</h3>
+  <div>
+    <canvas id="original"></canvas>
+    <label for="file">Choose image</label>
+    <input type="file" id="fileInput" name="file" />
+  </div>
+  <div id="steps">
+  </div>
+
+<script async src="opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
+<script src="processing.js" type="text/javascript"></script>
+<script type="text/javascript">
+    const img = new Image()
+
+    const originalImage = document.getElementById('original')
+    const originalContext = originalImage.getContext('2d')
+    const inputElement = document.getElementById('fileInput')
+    const stepsDiv = document.getElementById('steps')
+
+    const steps = new Steps(stepsDiv)
+
+    steps.addStep(new BlurStep(img))
+    steps.addStep(new MaskStep())
+    steps.addStep(new CannyStep())
+    steps.addStep(new HoughPStep())
+
+    img.onload = () => {
+      let src = cv.imread(img)
+      cv.imshow('original', src)
+      src.delete()
+      steps.run()
+    }
+
+    inputElement.addEventListener('change', (e) =>{
+      img.src = URL.createObjectURL(e.target.files[0])
+    }, false)
+
+    function onOpenCvReady() {
+      document.getElementById('status').innerHTML = 'Ready!'
+    }
+  </script>
+</body>
+
+</html>
