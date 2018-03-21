@@ -80,9 +80,9 @@ class Step {
 class BlurStep extends Step {
   constructor(src) {
     let params = {
-      'blurDiameter': { value: 3, max:20, min:0, type: 'range' },
-      'sigmaColor': { value: 150, type:'number' },
-      'sigmaSpace': { value: 150, type:'number' }
+      'blurDiameter': { value: 8, max:20, min:0, type: 'range' },
+      'sigmaColor': { value: 250, type:'number' },
+      'sigmaSpace': { value: 250, type:'number' }
     }
     super(params, src)
   }
@@ -103,7 +103,7 @@ class BlurStep extends Step {
 class MaskStep extends Step {
   constructor(src) {
     let params = {
-      'thresh': { value: 200, type: 'number' },
+      'thresh': { value: 190, type: 'number' },
       'maxval': { value: 255, type:'number' }
     }
     super(params, src)
@@ -121,34 +121,12 @@ class MaskStep extends Step {
   }
 }
 
-class RoiStep extends Step {
-  constructor(src) {
-    let params = {
-      'lowThresh': { value: 300, type: 'number' },
-      'highThresh': { value: 600, type:'number' },
-      'apertureSize': { value: 3, min: 3, max: 7, step: 2, type:'range' },
-      'L2gradient': { type:'checkbox' }
-    }
-    super(params, src)
-  }
-
-  process () {
-    let src = cv.imread(this.src)
-    this.rendered = new cv.Mat()
-    cv.Canny(
-      src, this.rendered,
-      ...this.inputs.map(this.get_value)
-    )
-    src.delete()
-  }
-}
-
 class CannyStep extends Step {
   constructor(src) {
     let params = {
-      'lowThresh': { value: 300, type: 'number' },
-      'highThresh': { value: 600, type:'number' },
-      'apertureSize': { value: 3, min: 3, max: 7, step: 2, type:'range' },
+      'lowThresh': { value: 100000, type: 'number' },
+      'highThresh': { value: 200000, type:'number' },
+      'apertureSize': { value: 7, min: 3, max: 7, step: 2, type:'range' },
       'L2gradient': { type:'checkbox' }
     }
     super(params, src)
@@ -168,9 +146,9 @@ class CannyStep extends Step {
 class HoughPStep extends Step {
   constructor(src) {
     let params = {
-      'houghThreshold': { value: 1, type: 'number' },
-      'minLineLength': { value: 10, type:'number' },
-      'maxLineGap': { value: 100, type:'number' },
+      'houghThreshold': { value: 115, type: 'number' },
+      'minLineLength': { value: 200, type:'number' },
+      'maxLineGap': { value: 240, type:'number' },
     }
     super(params, src)
   }
@@ -186,7 +164,6 @@ class HoughPStep extends Step {
       1, Math.PI / 180,
       ...this.inputs.map(this.get_value)
     )
-    console.log(lines)
     for (let i = 0; i < lines.rows; ++i) {
       let startPoint = new cv.Point(lines.data32S[i * 4], lines.data32S[i * 4 + 1]);
       let endPoint = new cv.Point(lines.data32S[i * 4 + 2], lines.data32S[i * 4 + 3]);
